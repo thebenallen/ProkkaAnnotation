@@ -2,14 +2,15 @@ module-name:
     ProkkaAnnotation
 
 module-description:
-    A KBase module
+    KBase app that runs Prokka annotation tool
 
 service-language:
     python
 
 module-version:
-    0.0.2
+    2.0.3
 
 owners:
-    [rsutormin]
+    [rsutormin, umaganapathyswork, jmc, scanon, bsadkhin]
+
 

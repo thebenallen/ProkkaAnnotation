@@ -20,7 +20,7 @@ from ProkkaAnnotation.authclient import KBaseAuth as _KBaseAuth
 
 DEPLOY = 'KB_DEPLOYMENT_CONFIG'
 SERVICE = 'KB_SERVICE_NAME'
-AUTH = 'auth-server-url'
+AUTH = 'auth-service-url'
 
 # Note that the error fields do not match the 2.0 JSONRPC spec
 
@@ -109,7 +109,11 @@ class JSONRPCServiceCustom(JSONRPCService):
             # Exception was raised inside the method.
             newerr = JSONServerError()
             newerr.trace = traceback.format_exc()
-            newerr.data = e.message
+            if isinstance(e.message, basestring):
+                newerr.data = e.message
+            else:
+                # Some exceptions embed other exceptions as the message
+                newerr.data = repr(e.message)
             raise newerr
         return result
 
@@ -329,10 +333,10 @@ class Application(object):
         self.serverlog.set_log_level(6)
         self.rpc_service = JSONRPCServiceCustom()
         self.method_authentication = dict()
-        self.rpc_service.add(impl_ProkkaAnnotation.annotate_contigs,
-                             name='ProkkaAnnotation.annotate_contigs',
+        self.rpc_service.add(impl_ProkkaAnnotation.annotate,
+                             name='ProkkaAnnotation.annotate',
                              types=[dict])
-        self.method_authentication['ProkkaAnnotation.annotate_contigs'] = 'required' # noqa
+        self.method_authentication['ProkkaAnnotation.annotate'] = 'required'  # noqa
         self.rpc_service.add(impl_ProkkaAnnotation.status,
                              name='ProkkaAnnotation.status',
                              types=[dict])
